@@ -1,0 +1,10 @@
+<table>
+  <tr *ngFor='let i of grid_array; let r = index'>
+    <td *ngFor='let j of i; let c=index'>
+      <button class="btn btn-primary" [disabled]="button_disable[r][c]==true" 
+      [ngClass]="{
+            'bomb-clicked':(button_disable[r][c]==true) && (grid_array[r][c]==-1)
+            }" (click)="showVal(r,c)" >{{button_text[r][c]}}</button>
+    </td>
+  </tr>
+</table>
