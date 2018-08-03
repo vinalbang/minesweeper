@@ -1,13 +1,57 @@
-.btn-primary{
+.panel-b{
+    height: 365px;
+    width: 280px;
+}
+.panel-i{
+    height: 605px;
+    width: 520px;
+}
+.panel-a{
+    height: 605px;
+    width: 1000px;
+}
+
+.panel-footer{
+    height: 40px;
+}
+
+.btn-primary,.btn-primary:hover{
     height: 30px;
     width: 30px;
-    background-color: gray;
+    background-color: dodgerblue;
     border: 1px solid black;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
 }
-.bomb-clicked{
+.btn-refresh{
+    height: 30px;
+    width: 30px;
+    background-image: url("../../assets/refres.png");
+    background-repeat: no-repeat;
+    background-size: 30px;
+    border-radius: 50%;
+}
+
+.button-clicked,.button-clicked:hover{
+    background-color: aliceblue;
+    cursor: pointer;
+}
+.bomb-clicked,.bomb-clicked:hover{
     height: 30px;
     width: 30px;
     background-image: url("../../assets/bomb_clicked.png");
+    background-repeat: no-repeat;
+    background-size: 30px;
+    cursor: pointer;
+}
+.button-right-clicked,.button-right-clicked:hover{
+    height: 30px;
+    width: 30px;
+    background-color: wheat;
+    background-image: url("../../assets/red-flag.png");
     background-repeat: no-repeat;
     background-size: 30px;
 }

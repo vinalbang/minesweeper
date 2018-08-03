@@ -1,10 +1,32 @@
-<table>
-  <tr *ngFor='let i of grid_array; let r = index'>
-    <td *ngFor='let j of i; let c=index'>
-      <button class="btn btn-primary" [disabled]="button_disable[r][c]==true" 
-      [ngClass]="{
-            'bomb-clicked':(button_disable[r][c]==true) && (grid_array[r][c]==-1)
-            }" (click)="showVal(r,c)" >{{button_text[r][c]}}</button>
-    </td>
-  </tr>
-</table>
+<div class="panel panel-default" align="center" [ngClass]="{
+            'panel-b':div_type==1,
+            'panel-i': div_type==2,
+            'panel-a':div_type==3
+            }">
+  <div class="panel-heading">
+    <div class="row" align="center">
+      <div class="col-md-4">{{mines}}</div>
+      <div class="col-md-4">
+        <button class="btn btn-refresh" (click)="setVals()"></button>
+      </div>
+      <div class="col-md-4">{{time}}</div>
+    </div>
+  </div>
+  <div class="panel-body" align="center">
+    <table>
+      <tr *ngFor='let i of grid_array; let r = index'>
+        <td *ngFor='let j of i; let c=index'>
+          <button class="btn btn-primary" [disabled]="button_disable[r][c]==true" [ngClass]="{
+            'bomb-clicked':(button_disable[r][c]==true) && (grid_array[r][c]==-1),
+            'button-clicked': (button_clicked[r][c]==true) && (grid_array[r][c]!=-1),
+            'button-right-clicked':(button_dbl_click[r][c]==true)
+            
+            }" (click)="showVal(r,c)" (contextmenu)="doubleClicked(r,c)">{{button_text[r][c]}}</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="panel-footer" align="center">
+    {{final_msg}}
+  </div>
+</div>

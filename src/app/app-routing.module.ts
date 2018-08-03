@@ -1,10 +1,24 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Routes, RouterModule } from '@angular/router';
+import { RulesComponent } from './rules/rules.component';
+import { GameComponent } from './game/game.component';
+
+const routes: Routes = [
+ {
+   path:'',
+   component: RulesComponent,
+   runGuardsAndResolvers : 'always'
+ },
+ {
+   path:'game/:id',
+   component: GameComponent,
+   runGuardsAndResolvers : 'always'
+ }
+];
+
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: []
+  imports: [ RouterModule.forRoot(routes, {onSameUrlNavigation:'ignore'}) ],
+  exports: [ RouterModule ]
 })
 export class AppRoutingModule { }

@@ -7,16 +7,6 @@ import { RulesComponent } from './rules/rules.component';
 import { GameComponent } from './game/game.component';
 import { FormsModule } from '@angular/forms';
 
-const routes: Routes = [
- {
-   path:'',
-   component: RulesComponent
- },
- {
-   path:'game',
-   component: GameComponent
- }
-];
 
 @NgModule({
   declarations: [
@@ -27,8 +17,7 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule,
-    RouterModule.forRoot(routes)
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TimeService } from '../time.service';
+import { NavigationEnd, ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -8,26 +10,69 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class GameComponent implements OnInit {
 
-  row: number;
-  col: number;
-  mines: number;
+  v: number;
+  timer;
+  time: number;
+  div_type: number;
+  row: number = 8;
+  col: number = 9;
+  mines: number = 10;
   grid_array: number[][] = [];
   mines_grid: number[][] = [];
   button_text: string[][] = [];
   button_disable: boolean[][] = [];
+  button_clicked: boolean[][] = [];
+  button_dbl_click: boolean[][] = [];
   first_click: boolean = true;
-
-  constructor() {
-    this.row = 8;
-    this.col = 8;
-    this.mines = 10;
+  button_clicked_count: number;
+  final_msg:string;
+  constructor(private route: ActivatedRoute) {
+    this.route.params.subscribe(
+      res => {
+        this.v = res.id;
+        this.setVals();
+      }
+    )
   }
 
-  ngOnInit() {
+  setVals() {
+    if (this.v == 1) {
+      this.row = 8;
+      this.col = 8;
+      this.mines = 10;
+      this.div_type = 1;
+    }
+    else if (this.v == 2) {
+      this.row = 16;
+      this.col = 16;
+      this.mines = 40;
+      this.div_type = 2;
+    }
+    else if (this.v == 3) {
+      this.row = 16;
+      this.col = 32;
+      this.mines = 99;
+      this.div_type = 3;
+    }
+    this.time = 0;
+    this.button_clicked = [];
+    this.button_disable = [];
+    this.grid_array = [];
+    this.button_text = [];
+    this.mines_grid = [];
+    this.button_dbl_click = [];
+    this.first_click = true;
+    this.button_clicked_count = 0;
+    this.final_msg="";
     this.createGrid();
     this.putMines();
     this.createTexts();
     this.setDisablity();
+    clearInterval(this.timer);
+  }
+
+  ngOnInit() {
+
   }
 
   createTexts() {
@@ -52,6 +97,22 @@ export class GameComponent implements OnInit {
       }
       this.button_disable.push(arr);
     }
+    for (let j = 0; j < this.row; j++) {
+
+      arr = [];
+      for (let i = 0; i < this.col; i++) {
+        arr.push(false);
+      }
+      this.button_clicked.push(arr);
+    }
+    for (let j = 0; j < this.row; j++) {
+
+      arr = [];
+      for (let i = 0; i < this.col; i++) {
+        arr.push(false);
+      }
+      this.button_dbl_click.push(arr);
+    }
   }
 
   createGrid() {
@@ -71,8 +132,8 @@ export class GameComponent implements OnInit {
     let j_pos: number;
     let mines_count: number;
     for (mines_count = 0; mines_count < this.mines; mines_count++) {
-      i_pos = Math.floor(Math.random() * (7));
-      j_pos = Math.floor(Math.random() * (7));
+      i_pos = Math.floor(Math.random() * (this.row - 1));
+      j_pos = Math.floor(Math.random() * (this.col - 1));
       if (this.grid_array[i_pos][j_pos] == 0) {
         this.grid_array[i_pos][j_pos] = -1;
         this.mines_grid[mines_count] = [];
@@ -113,28 +174,31 @@ export class GameComponent implements OnInit {
   }
 
   foo(row: number, col: number) {
-    if(this.button_disable[row][col]==true){
+    if ((this.button_disable[row][col] == true) || (this.button_dbl_click[row][col] == true)){
       return;
     }
     let count: number = this.getVal(row, col);
-
+    this.button_clicked_count = this.button_clicked_count + 1;
     if (count != 0) {
       this.button_text[row][col] = count.toString();
+      this.button_dbl_click[row][col] = false;
       this.button_disable[row][col] = true;
+      this.button_clicked[row][col] = true;
       return;
     }
     else {
       this.button_disable[row][col] = true;
+      this.button_dbl_click[row][col] = false;
+      this.button_clicked[row][col] = true;
       this.showZeroVals(row, col);
       return;
     }
   }
 
   getVal(r: number, c: number): number {
-    console.log(r + " " + c);
     this.button_disable[r][c] = true;
+    this.button_clicked[r][c] = true;
     if (this.grid_array[r][c] == -1) {
-      alert("bomb clicked!!!");
       return -1;
     }
     else {
@@ -163,23 +227,65 @@ export class GameComponent implements OnInit {
       if ((c + 1 < this.col)) {
         if (this.grid_array[r][c + 1] == -1) { count = count + 1; }
       }
-      console.log(count);
       return count;
     }
   }
 
   showVal(r: number, c: number) {
+    if (this.first_click == true) {
+      this.firstClickAction(r, c);
+    }
+    this.button_dbl_click[r][c] = false;
     let count: number = this.getVal(r, c);
-    if (count != 0 && count!=-1) {
+    if (count != 0 && count != -1) {
       this.button_text[r][c] = count.toString();
     }
-    else if(count==0){
+    else if (count == 0) {
       this.showZeroVals(r, c);
+    }
+    else {
+      this.gameOver();
+     this.final_msg="Game Lost. Time taken is : " + this.time +" seconds";
+
+    }
+    this.button_clicked_count = this.button_clicked_count + 1;
+    if (this.button_clicked_count == (this.row * this.col - this.mines)) {
+      this.gameOver();
+     this.final_msg="Game Won!!! Time taken is : " + this.time +" seconds";
+
     }
   }
 
-  getExp(r:number,c:number){
-    return this.button_disable[r][c];
+  firstClickAction(r: number, c: number) {
+    while (this.grid_array[r][c] == -1) {
+      this.grid_array = [];
+      this.mines_grid = [];
+      this.createGrid();
+      this.putMines();
+    }
+    this.startTimer();
+    this.first_click = false;
+  }
+
+  gameOver() {
+    clearInterval(this.timer);
+    for (let i = 0; i < this.row; i++) {
+      for (let j = 0; j < this.col; j++) {
+        this.button_disable[i][j] = true;
+        this.button_dbl_click[i][j] = false;
+      }
+    }
+  }
+
+  startTimer() {
+    this.timer = setInterval(() => {
+      this.time = this.time + 1;
+    }, 1000);
+  }
+
+  doubleClicked(r: number, c: number) {
+    this.button_dbl_click[r][c] = !this.button_dbl_click[r][c];
+    return false;
   }
 
 }
