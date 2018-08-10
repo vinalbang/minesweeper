@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TimeService } from '../time.service';
 import { NavigationEnd, ActivatedRoute, Router } from '@angular/router';
 
 @Component({
